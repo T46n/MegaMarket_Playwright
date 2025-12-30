@@ -11,13 +11,20 @@
     <link rel="stylesheet" href="css/custom.css" />
     <link rel="stylesheet" href="MegaMarket.BlazorUI.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet @rendermode="InteractiveServer" />
+    <HeadOutlet @rendermode="@AppRenderMode" />
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveServer" />
+    <Routes @rendermode="@AppRenderMode" />
     <script src="_framework/blazor.web.js"></script>
     <script src="js/localStorage.js"></script>
 </body>
 
 </html>
+
+@code {
+    private static IComponentRenderMode AppRenderMode =>
+        Environment.GetEnvironmentVariable("E2E_DISABLE_PRERENDER") == "1"
+            ? new InteractiveServerRenderMode(prerender: false)
+            : InteractiveServer;
+}

@@ -19,9 +19,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Configure API Base URL (overridable via configuration/environment)
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5036/";
+
 builder.Services.AddHttpClient("MegaMarket.API", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7284/");
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
 /*builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<InvoiceDAO>();
@@ -55,10 +59,9 @@ builder.Services.AddAuthentication(options =>
 {
     options.Cookie.Name = "MegaMarketAuthCookie";
     options.SlidingExpiration = true;
+    options.LoginPath = "/login";
+    options.AccessDeniedPath = "/unauthorized";
 });
-
-// Configure API Base URL
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7284/";
 
 // Add Dashboard API client service
 builder.Services.AddHttpClient<DashboardApiClient>(client =>
@@ -93,14 +96,14 @@ builder.Services.AddHttpClient<ProductApiClient>(client =>
 builder.Services.AddHttpClient<ProductService>((sp, client) =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
-    var baseUrl = configuration["ApiSettings:BaseUrl"] ?? configuration["ApiBaseUrl"] ?? "https://localhost:7284";
+    var baseUrl = configuration["ApiSettings:BaseUrl"] ?? configuration["ApiBaseUrl"] ?? "http://localhost:5036";
     client.BaseAddress = new Uri(baseUrl);
 });
 
 builder.Services.AddHttpClient<ImportService>((sp, client) =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
-    var baseUrl = configuration["ApiSettings:BaseUrl"] ?? configuration["ApiBaseUrl"] ?? "https://localhost:7284";
+    var baseUrl = configuration["ApiSettings:BaseUrl"] ?? configuration["ApiBaseUrl"] ?? "http://localhost:5036";
     client.BaseAddress = new Uri(baseUrl);
 });
 
