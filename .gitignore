@@ -287,6 +287,10 @@ node_modules/
 playwright-report/
 test-results/
 
+# Keep Playwright report bundle tracked
+!e2e-report/
+!e2e-report/**
+
 # Visual Studio 6 build log
 *.plg
 
